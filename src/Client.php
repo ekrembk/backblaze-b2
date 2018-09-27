@@ -217,7 +217,7 @@ class Client
                 'Content-Type'                       => $options['FileContentType'],
                 'Content-Length'                     => $size,
                 'X-Bz-File-Name'                     => $options['FileName'],
-                'X-Bz-Content-Sha1'                  => $hash,
+                'X-Bz-Content-Sha1'                  => 'do_not_verify',
                 'X-Bz-Info-src_last_modified_millis' => $options['FileLastModified'],
             ],
             'body' => $options['Body'],
