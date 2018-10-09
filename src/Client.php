@@ -196,7 +196,7 @@ class Client
         }
 
         // Calculate SHA1 hash
-        $hash = hash_file('sha1', stream_get_meta_data($stream)['uri']);
+        $hash = hash_file('sha1', stream_get_meta_data($options['Body'])['uri']);
 
         // Similarly, we have to use fstat to get the size of the stream.
         $size = fstat($options['Body'])['size'];
