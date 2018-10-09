@@ -199,7 +199,8 @@ class Client
             rewind($options['Body']);
         } else {
             // We've been given a simple string body, it's super simple to calculate the hash and size.
-            $hash = sha1($options['Body']);
+            // $hash = sha1($options['Body']);
+            $hash = 'do_not_verify';
             $size = mb_strlen($options['Body']);
         }
 
@@ -217,7 +218,7 @@ class Client
                 'Content-Type'                       => $options['FileContentType'],
                 'Content-Length'                     => $size,
                 'X-Bz-File-Name'                     => $options['FileName'],
-                'X-Bz-Content-Sha1'                  => 'do_not_verify',
+                'X-Bz-Content-Sha1'                  => $hash,
                 'X-Bz-Info-src_last_modified_millis' => $options['FileLastModified'],
             ],
             'body' => $options['Body'],
