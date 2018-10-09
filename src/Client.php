@@ -186,23 +186,23 @@ class Client
         $uploadEndpoint = $response['uploadUrl'];
         $uploadAuthToken = $response['authorizationToken'];
 
-        if (is_resource($options['Body'])) {
-            // We need to calculate the file's hash incrementally from the stream.
-            $context = hash_init('sha1');
-            hash_update_stream($context, $options['Body']);
-            $hash = hash_final($context);
-
-            // Similarly, we have to use fstat to get the size of the stream.
-            $size = fstat($options['Body'])['size'];
-
-            // Rewind the stream before passing it to the HTTP client.
-            rewind($options['Body']);
-        } else {
-            // We've been given a simple string body, it's super simple to calculate the hash and size.
-            // $hash = sha1($options['Body']);
-            $hash = 'do_not_verify';
-            $size = mb_strlen($options['Body']);
+        // Convert to a stream if it is not
+        // Otherwise it causes the SHA1 issue
+        if ( ! is_resource($options['Body'])) {
+            // Convert to stream
+            $stream = tmpfile();
+            fwrite($stream, $options['Body']);
+            $options['Body'] = $stream;
         }
+
+        // Calculate SHA1 hash
+        $hash = hash_file('sha1', stream_get_meta_data($stream)['uri']);
+
+        // Similarly, we have to use fstat to get the size of the stream.
+        $size = fstat($options['Body'])['size'];
+
+        // Rewind the stream before passing it to the HTTP client.
+        rewind($options['Body']);
 
         if (!isset($options['FileLastModified'])) {
             $options['FileLastModified'] = round(microtime(true) * 1000);
